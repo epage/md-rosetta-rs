@@ -19,6 +19,8 @@ def main():
     cpus = multiprocessing.cpu_count()
     rustc = subprocess.run(["rustc", "--version"], check=True, capture_output=True, encoding="utf-8").stdout.strip()
 
+    extension = ".exe" if sys.platform in ("win32", "cygwin") else ""
+
     runs_root = repo_root / "runs"
     runs_root.mkdir(parents=True, exist_ok=True)
     raw_run_path = runs_root / "{}-{}.json".format(timestamp, hostname)
@@ -69,7 +71,7 @@ def main():
             if True:
                 # Doing release builds because that is where size probably matters most
                 subprocess.run(["cargo", "build", "--release", "--package", example_path.name], cwd=repo_root, check=True)
-                app_path = repo_root / f"target/release/{example_path.name}"
+                app_path = repo_root / f"target/release/{example_path.name}{extension}"
                 file_size = app_path.stat().st_size
             else:
                 app_path = None
